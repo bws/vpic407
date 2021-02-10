@@ -6,7 +6,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-//#include <H5Part.h>
+#include <H5Part.h>
 #include <mpi.h>
 #include <math.h>
 
@@ -102,6 +102,8 @@ begin_initialization {
   double wpe_wce = 0.1;      // electron plasma freq / electron cyclotron freq
   double bg = 1e-6;           // electron plasma freq / electron cyclotron freq
   double taui    = 2000/wpe_wce;      // simulation wci's to run
+  //BWS
+  taui    = 1/wpe_wce;      // simulation wci's to run
   
   double quota   = 15.;   // run quota in hours
   double quota_sec = quota*3600;  // Run quota in seconds
@@ -130,10 +132,14 @@ begin_initialization {
   double Lz    = 300.0*di; // size of box in z dimension
 
   double topology_x = 256;  // Number of domains in x, y, and z
+  //BWS
+  topology_x = 8;
   double topology_y = 1; 
   double topology_z = 2;  
 
   double nx = 4096;
+  //BWS
+  nx = 256;
   double ny = 1;
   double nz = 2048;
 
@@ -984,12 +990,12 @@ begin_diagnostics {
 
         if(global->particle_tracing==1){
           if( should_dump(tracer) ) dump_traj("tracer");
-          //if (should_dump(tracer)){
-          //  char subdir[36];
-          //  sprintf(subdir,"tracer/T.%d",step);
-          //  dump_mkdir(subdir);
-          //  #include "dumptracer_h5part.cxx"
-          //}
+          if (should_dump(tracer)){
+            char subdir[36];
+            sprintf(subdir,"tracer/T.%d",step);
+            dump_mkdir(subdir);
+            #include "dumptracer_h5part.cxx"
+          }
         }
 
 	/*--------------------------------------------------------------------------
